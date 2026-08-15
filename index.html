@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>0.1 — KEARI</title>
+<style>
+:root{color:#0a0a0a;background:#fff;font-family:Arial,Helvetica,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:#fff}
+body{margin:0;min-width:320px;background:#fff}
+button,a,input{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #0a0a0a;outline-offset:4px}
+::selection{color:#fff;background:#0a0a0a}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.site-shell{width:100%;overflow:clip;background:#fff}
+.hero{position:relative;min-height:100svh;padding:26px 34px 30px;isolation:isolate;border-bottom:1px solid #0a0a0a}
+.topbar{position:relative;z-index:5;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;font-size:10px;font-weight:700;letter-spacing:.17em;line-height:1}
+.topbar p{margin:0}
+.topbar a{color:inherit;text-decoration:none}
+.topbar>a:last-child{justify-self:end}
+.wordmark{font-size:17px;font-weight:900;letter-spacing:-.08em!important}
+.wordmark span{color:#b4b4b4}
+.hero-art{position:absolute;z-index:-1;inset:4.5vh 10vw 6vh;display:grid;place-items:center;overflow:hidden}
+.ornament{width:min(53vw,590px);height:min(83vh,900px);object-fit:contain;color:#090909;transform-origin:center;animation:emblem-breathe 8s ease-in-out infinite}
+.ornament-lines{stroke-width:.95;stroke-dasharray:1700;stroke-dashoffset:1700;animation:draw-emblem 3.2s cubic-bezier(.65,0,.25,1) .2s forwards}
+.hero-copy{position:absolute;z-index:2;left:34px;bottom:30px;width:min(29vw,340px)}
+.edition,.section-heading>p,.heading-note{margin:0 0 14px;font-size:9px;font-weight:700;letter-spacing:.2em}
+.hero-copy h1{margin:0;font-size:clamp(52px,7.8vw,130px);font-weight:900;letter-spacing:-.09em;line-height:.73}
+.intro{width:270px;max-width:100%;margin:30px 0 0;font-size:12px;line-height:1.5}
+.hero-action{position:absolute;z-index:4;right:34px;bottom:30px;display:flex;flex-direction:column;align-items:flex-end;gap:22px}
+.listen-button{display:flex;align-items:center;gap:15px;padding:0;color:#0a0a0a;background:transparent;border:0;cursor:pointer;font-size:10px;font-weight:700;letter-spacing:.15em}
+.listen-icon{display:grid;width:58px;height:58px;place-items:center;color:#fff;background:#0a0a0a;border:1px solid #0a0a0a;border-radius:50%;transition:color .35s ease,background .35s ease,transform .35s ease}
+.listen-button:hover .listen-icon{color:#0a0a0a;background:#fff;transform:rotate(120deg)}
+.play-icon{width:12px;height:14px}
+.pause-icon{display:inline-flex;width:12px;height:14px;align-items:center;justify-content:center;gap:3px}
+.pause-icon i{display:block;width:2px;height:12px;background:currentColor}
+.scroll-link{display:flex;gap:14px;align-items:center;color:#0a0a0a;font-size:9px;font-weight:700;letter-spacing:.17em;text-decoration:none}
+.scroll-link span:last-child{font-size:16px;animation:nudge-down 1.8s ease-in-out infinite}
+.reveal{opacity:0;animation:reveal-up .8s cubic-bezier(.2,.75,.25,1) forwards}
+.reveal-1{animation-delay:.05s}.reveal-2{animation-delay:.15s}.reveal-3{animation-delay:.35s}.reveal-4{animation-delay:.5s}
+.tracklist-section{padding:118px 34px 150px}
+.section-heading{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;margin-bottom:74px}
+.section-heading>p{margin:0 0 9px}
+.section-heading h2{margin:0;font-size:clamp(46px,7.2vw,112px);font-weight:900;letter-spacing:-.085em;line-height:.76}
+.section-heading .heading-note{justify-self:end;margin:0 0 9px}
+.tracks{border-top:1px solid #0a0a0a}
+.track-row{position:relative;display:grid;width:100%;grid-template-columns:75px minmax(0,1fr) 80px 52px;align-items:center;min-height:82px;padding:0 4px;overflow:hidden;color:#0a0a0a;text-align:left;background:transparent;border:0;border-bottom:1px solid #0a0a0a;cursor:pointer;transition:color .28s ease,padding .28s ease}
+.track-row::before{position:absolute;z-index:0;inset:0;content:"";background:#0a0a0a;transform:translateY(102%);transition:transform .36s cubic-bezier(.65,0,.2,1)}
+.track-row:hover,.track-row.active{padding-inline:17px;color:#fff}
+.track-row:hover::before,.track-row.active::before{transform:translateY(0)}
+.track-row>span{position:relative;z-index:1}
+.track-number,.track-duration{font-size:10px;font-weight:700;letter-spacing:.14em}
+.track-title{padding-right:30px;font-size:clamp(21px,2.4vw,38px);font-weight:700;letter-spacing:-.045em;line-height:1.05;text-transform:uppercase}
+.track-duration{justify-self:end}
+.track-action{display:grid;justify-self:end;width:34px;height:34px;place-items:center;border:1px solid currentColor;border-radius:50%;transition:transform .35s ease}
+.track-row:hover .track-action{transform:rotate(120deg)}
+.track-row.active .track-action{color:#0a0a0a;background:#fff}
+.footer{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;min-height:340px;padding:50px 34px;color:#fff;background:#0a0a0a;font-size:9px;font-weight:700;letter-spacing:.18em}
+.footer-mark{align-self:start}
+.mark-icon{width:42px;height:42px}
+.footer p{margin:0}
+.footer button{justify-self:end;padding:0 0 5px;color:#fff;background:transparent;border:0;border-bottom:1px solid currentColor;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.18em}
+.footer button span{display:inline-block;margin-left:8px;transition:transform .25s ease}
+.footer button:hover span{transform:translate(3px,-3px)}
+.player{position:fixed;z-index:50;right:14px;bottom:14px;left:14px;color:#fff;background:#0a0a0a;border:1px solid #fff;display:none;animation:player-in .55s cubic-bezier(.2,.8,.2,1) both}
+.player.show{display:block}
+.player-progress-wrap{position:absolute;top:-1px;right:-1px;left:-1px;height:11px;transform:translateY(-50%)}
+.player-progress{width:100%;height:11px;margin:0;cursor:pointer;appearance:none;background:linear-gradient(to right,#0a0a0a var(--progress),#c8c8c8 var(--progress))}
+.player-progress::-webkit-slider-thumb{width:11px;height:11px;margin-top:-4px;appearance:none;background:#fff;border:2px solid #0a0a0a;border-radius:50%}
+.player-inner{display:grid;grid-template-columns:1fr auto 1fr;min-height:82px;align-items:center;padding:11px 22px 8px}
+.now-playing{display:flex;min-width:0;align-items:center;gap:17px}
+.now-playing>span{font-size:9px;letter-spacing:.14em}
+.now-playing div{min-width:0}
+.now-playing p{max-width:430px;margin:0 0 4px;overflow:hidden;font-size:13px;font-weight:700;letter-spacing:-.01em;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}
+.now-playing small{display:block;max-width:430px;overflow:hidden;color:#a7a7a7;font-size:8px;font-weight:700;letter-spacing:.14em;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}
+.transport{display:flex;align-items:center;gap:19px}
+.transport button,.player-meta button{padding:0;color:#fff;background:transparent;border:0;cursor:pointer;font-size:8px;font-weight:700;letter-spacing:.15em}
+.transport .main-play{display:grid;width:42px;height:42px;place-items:center;color:#0a0a0a;background:#fff;border:1px solid #fff;border-radius:50%}
+.player-meta{display:flex;justify-self:end;align-items:center;gap:22px}
+.player-meta p{margin:0;font-size:9px;font-variant-numeric:tabular-nums;letter-spacing:.12em}
+@keyframes reveal-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes draw-emblem{to{stroke-dashoffset:0}}
+@keyframes emblem-breathe{0%,100%{transform:scale(.985)}50%{transform:scale(1.015)}}
+@keyframes nudge-down{0%,100%{transform:translateY(-2px)}50%{transform:translateY(3px)}}
+@keyframes player-in{from{opacity:0;transform:translateY(120%)}to{opacity:1;transform:translateY(0)}}
+@media (max-width:760px){
+.hero{min-height:100svh;padding:21px 18px 24px}
+.topbar{grid-template-columns:1fr 1fr}
+.topbar p{display:none}
+.hero-art{inset:6vh -4vw 24vh}
+.ornament{width:min(92vw,520px);height:67vh}
+.hero-copy{right:18px;bottom:115px;left:18px;width:auto}
+.hero-copy h1{font-size:clamp(54px,21vw,96px)}
+.intro{margin-top:20px;font-size:11px}
+.hero-action{right:18px;bottom:24px;left:18px;flex-direction:row;justify-content:space-between;align-items:center}
+.listen-icon{width:52px;height:52px}
+.listen-button>span:last-child{display:none}
+.tracklist-section{padding:90px 18px 110px}
+.section-heading{display:block;margin-bottom:50px}
+.section-heading h2{margin-top:25px;font-size:16.5vw}
+.section-heading .heading-note{display:none}
+.track-row{grid-template-columns:44px minmax(0,1fr) 42px;min-height:69px;padding:0 2px}
+.track-row:hover,.track-row.active{padding-inline:9px}
+.track-title{padding-right:10px;font-size:clamp(17px,5.3vw,24px)}
+.track-duration{display:none}
+.track-action{width:30px;height:30px}
+.footer{grid-template-columns:1fr 1fr;min-height:280px;padding:35px 18px 105px}
+.footer p{display:none}
+.player{right:6px;bottom:6px;left:6px}
+.player-inner{grid-template-columns:minmax(0,1fr) auto;min-height:73px;padding:10px 13px 7px}
+.now-playing{gap:10px}
+.now-playing>span{display:none}
+.transport{gap:10px}
+.transport>button:not(.main-play){display:none}
+.player-meta{gap:10px}
+.player-meta button{display:none}
+.main-play{margin-left:10px}
+}
+</style>
+</head>
+<body>
+<main class="site-shell">
+<audio id="audio" preload="metadata"></audio>
+
+<section class="hero" aria-labelledby="album-title">
+<header class="topbar reveal reveal-1">
+<a class="wordmark" href="#top">KEARI<span>.</span></a>
+<p>ALBUM PREVIEW / 2026</p>
+<a href="#tracklist">TRACKLIST / 24</a>
+</header>
+
+<div id="top" class="hero-art reveal reveal-2">
+<img class="ornament" id="logoImg" src="logo.png" alt="0.1 album emblem" style="display:none;object-fit:contain;mix-blend-mode:multiply;filter:grayscale(1) contrast(1.12)" />
+<svg class="ornament" id="logoSvg" viewBox="0 0 560 900" role="img" aria-label="0.1 emblem">
+<defs><path id="emblem-half" d="M279 65c-14 68-10 157-26 235-8 39-22 73-49 94 22 10 35 24 42 43-25 11-51 10-73-1 7-22 22-39 43-50-42-29-75-66-100-111-13-23-18-48-13-75-14 21-18 43-8 68-19 4-28-5-28-27 0-52 41-105 90-150 41-37 77-58 103-72M204 394c-21 12-36 31-44 57-32-2-63 6-93 21 31-31 65-51 103-56M160 451c-41 0-78 12-111 36 41-13 77-12 103 7 17 12 5 31-17 29-20-1-37-11-50-27 9 58 38 116 87 168M242 455c-46-5-79 19-94 62-18 53 5 105 66 156l-20 18 20 9-12 24c19 37 30 84 27 142M236 478c-18 40-14 75 13 106-19 1-31 7-38 18 16 2 27 9 34 21M279 337c-1 64-8 104-23 120-9 10-25 16-47 18 40 9 62 31 67 66M279 461c-20 24-28 55-25 91 1 18 9 38 25 59M261 592c-12 21-18 54-16 99 1 33 9 74 24 123M269 814l10 54"/></defs>
+<g class="ornament-fill" fill="currentColor" opacity=".025">
+<path d="M280 50 250 300l-62 94 80 78 12 395-92-202-42-99-71-76 91-53L56 469l109-62-79-149L240 57Z"/>
+<path d="M280 50 310 300l62 94-80 78-12 395 92-202 42-99 71-76-91-53 110 32-109-62 79-149L320 57Z"/>
+</g>
+<g class="ornament-lines" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke">
+<use href="#emblem-half"/>
+<use href="#emblem-half" transform="translate(560 0) scale(-1 1)"/>
+<path d="M280 65c-2 152 7 292 0 396-2 29-14 49-35 60 19 5 31 16 35 33 4-17 16-28 35-33-21-11-33-31-35-60M280 610c-13 60-14 124-4 192l4 66 4-66c10-68 9-132-4-192Z"/>
+</g>
+</svg>
+</div>
+
+<div class="hero-copy reveal reveal-3">
+<p class="edition">24 TRACK COLLECTION</p>
+<h1 id="album-title">0.1</h1>
+<p class="intro">A continuous album preview. Press play and move through the full sequence.</p>
+</div>
+
+<div class="hero-action reveal reveal-4">
+<button type="button" class="listen-button" id="heroPlay">
+<span class="listen-icon" id="heroPlayIcon"><svg class="play-icon" viewBox="0 0 18 20"><path d="M17 10 1 19V1l16 9Z" fill="currentColor"/></svg></span>
+<span id="heroPlayLabel">LISTEN TO THE RECORD</span>
+</button>
+<a class="scroll-link" href="#tracklist"><span>SCROLL FOR TRACKS</span><span>V</span></a>
+</div>
+</section>
+
+<section id="tracklist" class="tracklist-section">
+<div class="section-heading">
+<p>THE RECORD / 56:49</p>
+<h2>TRACKLIST</h2>
+<p class="heading-note">SELECT A TRACK TO PREVIEW</p>
+</div>
+<div class="tracks" id="tracks"></div>
+</section>
+
+<footer class="footer">
+<div class="footer-mark"><svg class="mark-icon" viewBox="0 0 34 34"><path d="M17 2 8 11l4 5-6 5 11 11 11-11-6-5 4-5-9-9Z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M17 2v30M8 11h18" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></div>
+<p>KEARI / 0.1 / TWENTY FOUR TRACKS / 2026</p>
+<button type="button" id="loadLocalBtn">LOAD LOCAL AUDIO <span>-&gt;</span></button>
+<input id="fileInput" class="sr-only" type="file" accept="audio/*" multiple />
+</footer>
+
+<aside class="player" id="player">
+<div class="player-progress-wrap">
+<input class="player-progress" id="seek" type="range" min="0" max="1" step="0.01" value="0" />
+</div>
+<div class="player-inner">
+<div class="now-playing">
+<span id="nowNumber">01</span>
+<div><p id="nowTitle">—</p><small id="nowStatus">NOW PLAYING</small></div>
+</div>
+<div class="transport">
+<button type="button" id="prevBtn">PREV</button>
+<button class="main-play" type="button" id="mainPlay"><svg class="play-icon" viewBox="0 0 18 20"><path d="M17 10 1 19V1l16 9Z" fill="currentColor"/></svg></button>
+<button type="button" id="nextBtn">NEXT</button>
+</div>
+<div class="player-meta">
+<p id="timeDisplay">0:00 / 0:00</p>
+<button type="button" id="muteBtn">SOUND ON</button>
+</div>
+</div>
+</aside>
+</main>
+
+<script>
+const tracks = [
+["lifeee","1:51"],["on my mind","1:54"],["just like you","1:39"],["error","2:01"],
+["just u and me","2:51"],["hands to myself","2:14"],["jelly","2:14"],["darkside","2:56"],
+["gather flowers","2:28"],["before","1:41"],["quarter","3:38"],["busta","1:35"],
+["skrillex & isoxo - fuze (keari remix)","3:15"],["nothing left","2:25"],["someone said","2:26"],
+["show me love","1:33"],["tonight","1:49"],["phantom","2:02"],["close my eyes","3:36"],
+["dont let go","2:57"],["love me right","2:53"],["ifucry","1:51"],["lost life","2:03"],["fax","2:57"]
+];
+const slugify = v => v.toLowerCase().replace(/&/g,"and").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const toSeconds = d => { const [m,s] = d.split(":").map(Number); return m*60+s; };
+const data = tracks.map(([title,duration],i)=>({title,duration,seconds:toSeconds(duration),file:`public/audio/${String(i+1).padStart(2,"0")}-${slugify(title)}.mp3`}));
+const fmt = s => { if(!isFinite(s)) return "0:00"; const m=Math.floor(s/60); return `${m}:${Math.floor(s%60).toString().padStart(2,"0")}`; };
+const localSources = {};
+
+document.getElementById("logoImg").addEventListener("error", function(){ this.style.display="none"; });
+document.getElementById("logoImg").addEventListener("load", function(){ this.style.display="block"; document.getElementById("logoSvg").style.display="none"; });
+
+const audio = document.getElementById("audio");
+const tracksEl = document.getElementById("tracks");
+const player = document.getElementById("player");
+const seekEl = document.getElementById("seek");
+let currentTrack = null, isPlaying = false;
+
+data.forEach((t,i)=>{
+const row = document.createElement("button");
+row.type = "button"; row.className = "track-row"; row.dataset.index = i;
+row.innerHTML = `<span class="track-number">${String(i+1).padStart(2,"0")}</span><span class="track-title">${t.title}</span><span class="track-duration">${t.duration}</span><span class="track-action"><svg class="play-icon" viewBox="0 0 18 20"><path d="M17 10 1 19V1l16 9Z" fill="currentColor"/></svg></span>`;
+row.addEventListener("click", ()=>playTrack(i));
+tracksEl.appendChild(row);
+});
+
+function setIcon(container, playing){
+container.innerHTML = playing
+? `<span class="pause-icon"><i></i><i></i></span>`
+: `<svg class="play-icon" viewBox="0 0 18 20"><path d="M17 10 1 19V1l16 9Z" fill="currentColor"/></svg>`;
+}
+
+function updateActiveRow(){
+document.querySelectorAll(".track-row").forEach(row=>{
+const idx = Number(row.dataset.index);
+const active = idx === currentTrack;
+row.classList.toggle("active", active);
+setIcon(row.querySelector(".track-action"), active && isPlaying);
+});
+}
+
+async function playTrack(i){
+if(currentTrack === i && !audio.paused){ audio.pause(); return; }
+if(currentTrack !== i){
+audio.src = localSources[i] || data[i].file;
+currentTrack = i;
+}
+document.getElementById("nowStatus").textContent = "NOW PLAYING";
+try{ await audio.play(); }
+catch(e){ document.getElementById("nowStatus").textContent = `Add ${data[i].file} to public/audio, or load your files below.`; }
+player.classList.add("show");
+document.getElementById("nowNumber").textContent = String(i+1).padStart(2,"0");
+document.getElementById("nowTitle").textContent = data[i].title;
+updateActiveRow();
+}
+
+audio.addEventListener("play", ()=>{ isPlaying = true; updateActiveRow(); setIcon(document.getElementById("heroPlayIcon"), true); document.getElementById("heroPlayLabel").textContent = "PAUSE THE RECORD"; setIcon(document.getElementById("mainPlay"), true); });
+audio.addEventListener("pause", ()=>{ isPlaying = false; updateActiveRow(); setIcon(document.getElementById("heroPlayIcon"), false); document.getElementById("heroPlayLabel").textContent = "LISTEN TO THE RECORD"; setIcon(document.getElementById("mainPlay"), false); });
+audio.addEventListener("timeupdate", ()=>{
+seekEl.max = audio.duration || 1;
+seekEl.value = audio.currentTime;
+seekEl.style.setProperty("--progress", `${(audio.currentTime/(audio.duration||1))*100}%`);
+document.getElementById("timeDisplay").textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`;
+});
+audio.addEventListener("error", ()=>{
+if(currentTrack !== null) document.getElementById("nowStatus").textContent = `Add ${data[currentTrack].file} to public/audio, or load your files below.`;
+});
+audio.addEventListener("ended", ()=> playTrack((currentTrack+1) % data.length));
+
+document.getElementById("heroPlay").addEventListener("click", ()=> playTrack(currentTrack ?? 0));
+document.getElementById("mainPlay").addEventListener("click", ()=> playTrack(currentTrack ?? 0));
+document.getElementById("nextBtn").addEventListener("click", ()=> playTrack(currentTrack===null?0:(currentTrack+1)%data.length));
+document.getElementById("prevBtn").addEventListener("click", ()=> playTrack(currentTrack===null?0:(currentTrack-1+data.length)%data.length));
+seekEl.addEventListener("input", e=>{ audio.currentTime = Number(e.target.value); });
+document.getElementById("muteBtn").addEventListener("click", ()=>{
+audio.muted = !audio.muted;
+document.getElementById("muteBtn").textContent = audio.muted ? "SOUND OFF" : "SOUND ON";
+});
+document.getElementById("loadLocalBtn").addEventListener("click", ()=> document.getElementById("fileInput").click());
+document.getElementById("fileInput").addEventListener("change", e=>{
+const files = Array.from(e.target.files || []);
+if(!files.length) return;
+Object.values(localSources).forEach(URL.revokeObjectURL);
+for (const key in localSources) delete localSources[key];
+const unnumbered = [];
+files.forEach(file=>{
+const match = file.name.match(/^\s*(\d{1,2})\b/);
+const idx = match ? Number(match[1]) - 1 : -1;
+if(idx >= 0 && idx < data.length && localSources[idx] === undefined){
+localSources[idx] = URL.createObjectURL(file);
+} else {
+unnumbered.push(file);
+}
+});
+unnumbered.forEach(file=>{
+const openIdx = data.findIndex((_,i)=> localSources[i] === undefined);
+if(openIdx >= 0) localSources[openIdx] = URL.createObjectURL(file);
+});
+});
+document.addEventListener("keydown", e=>{
+if(["INPUT","TEXTAREA","BUTTON"].includes(e.target.tagName)) return;
+if(e.code === "Space"){ e.preventDefault(); playTrack(currentTrack ?? 0); }
+if(e.code === "ArrowRight") document.getElementById("nextBtn").click();
+if(e.code === "ArrowLeft") document.getElementById("prevBtn").click();
+});
+</script>
+</body>
+</html>
